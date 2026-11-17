@@ -277,4 +277,5 @@ The take-home test also asks for a **live link, a GitHub repository link and a d
 ## Ideas for continuing development
 Admin login (JWT), editable selling prices per fruit, printing invoices, stock adjustments for damaged fruit, pagination, and charts.
 #   B a t l o u n g  
+ #   B a t l o u n g - 2  
  
