@@ -8,7 +8,7 @@ import useLoad from '../hooks/useLoad.js';
 import useDebounce from '../hooks/useDebounce.js';
 import { api } from '../services/api.js';
 import { money, dateOnly } from '../utils/format.js';
-import { getLocationDistance } from '../utils/location.js';
+import { buildDirectionsUrl, buildGoogleMapsUrl, getLocationDistance } from '../utils/location.js';
 
 const emptyForm = { vendor_name: '', phone_number: '', location: '', registration_date: '' };
 
@@ -92,6 +92,7 @@ export default function Vendors() {
             <tbody>
               {vendors.map((v) => {
                 const meta = distanceByVendor[v.vendor_id] || {};
+                const mapQuery = `${v.location}, Lesotho`;
                 return (
                   <tr key={v.vendor_id}>
                     <td>{v.vendor_id}</td>
@@ -101,8 +102,9 @@ export default function Vendors() {
                       <div className="map-cell">
                         <span>{v.location}</span>
                         <div className="map-meta">
-                          <a href={meta.googleMapUrl || '#'} target="_blank" rel="noreferrer" className="map-link">Open map</a>
-                          {meta.distanceText && <span className="map-distance">{meta.distanceText}</span>}
+                          <a href={buildGoogleMapsUrl(mapQuery)} target="_blank" rel="noreferrer" className="map-link">View location in Lesotho</a>
+                          <a href={buildDirectionsUrl(mapQuery)} target="_blank" rel="noreferrer" className="map-link">Driving route from Batloung Farm</a>
+                          {meta.distanceText && <span className="map-distance">{meta.distanceText} straight-line</span>}
                         </div>
                       </div>
                     </td>

@@ -255,6 +255,7 @@ small { font-size: 12px; }
 .map-distance {
   display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 999px; background: rgba(74, 154, 83, 0.08); color: var(--green-900); font-size: 11px; font-weight: 700;
 }
+.map-link:focus-visible { outline: 3px solid #e6a826; outline-offset: 2px; }
 .inline-form { display: flex; gap: 8px; align-items: end; flex-wrap: wrap; }
 .inline-form .field { min-width: 150px; }
 

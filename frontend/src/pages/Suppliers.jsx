@@ -9,7 +9,7 @@ import useLoad from '../hooks/useLoad.js';
 import useDebounce from '../hooks/useDebounce.js';
 import { api } from '../services/api.js';
 import { PROVINCES } from '../utils/format.js';
-import { getLocationDistance } from '../utils/location.js';
+import { buildDirectionsUrl, buildGoogleMapsUrl, getLocationDistance } from '../utils/location.js';
 
 const emptyForm = { business_name: '', contact_person: '', phone: '', province: PROVINCES[0], address: '' };
 
@@ -36,7 +36,7 @@ export default function Suppliers() {
       }
 
       const results = await Promise.all(suppliers.map(async (supplier) => {
-        const distance = await getLocationDistance(supplier.address);
+        const distance = await getLocationDistance(supplier.address, `${supplier.province}, South Africa`);
         return [supplier.supplier_id, distance];
       }));
 
@@ -106,6 +106,7 @@ export default function Suppliers() {
             <tbody>
               {suppliers.map((s) => {
                 const meta = distanceBySupplier[s.supplier_id] || {};
+                const mapQuery = `${s.address}, ${s.province}, South Africa`;
                 return (
                   <tr key={s.supplier_id}>
                     <td>{s.supplier_id}</td>
@@ -117,8 +118,9 @@ export default function Suppliers() {
                       <div className="map-cell">
                         <span>{s.address}</span>
                         <div className="map-meta">
-                          <a href={meta.googleMapUrl || '#'} target="_blank" rel="noreferrer" className="map-link">Open map</a>
-                          {meta.distanceText && <span className="map-distance">{meta.distanceText}</span>}
+                          <a href={buildGoogleMapsUrl(mapQuery)} target="_blank" rel="noreferrer" className="map-link">View supplier location</a>
+                          <a href={buildDirectionsUrl(mapQuery)} target="_blank" rel="noreferrer" className="map-link">Driving route from Batloung Farm</a>
+                          {meta.distanceText && <span className="map-distance">{meta.distanceText} straight-line</span>}
                         </div>
                       </div>
                     </td>

@@ -9,7 +9,8 @@ export function buildGoogleMapsUrl(query) {
 export function buildDirectionsUrl(destinationQuery) {
   if (!destinationQuery || !String(destinationQuery).trim()) return '#';
   const destination = encodeURIComponent(String(destinationQuery).trim());
-  return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(`${FARM_BASE.lat},${FARM_BASE.lng}`)}&destination=${destination}`;
+  const origin = encodeURIComponent(`${FARM_BASE.lat},${FARM_BASE.lng}`);
+  return `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=driving`;
 }
 
 export function haversineKm(a, b) {
@@ -33,11 +34,12 @@ export function formatDistanceKm(km) {
   return `${km.toFixed(1)} km away`;
 }
 
-export async function geocodeLocation(query) {
+export async function geocodeLocation(query, region = 'Lesotho') {
   const cleaned = String(query || '').trim();
   if (!cleaned) return null;
 
-  const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(`${cleaned}, Lesotho`)}`;
+  const search = `${cleaned}, ${region}`;
+  const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(search)}`;
 
   try {
     const response = await fetch(url, {
@@ -63,16 +65,17 @@ export async function geocodeLocation(query) {
   }
 }
 
-export async function getLocationDistance(query) {
+export async function getLocationDistance(query, region = 'Lesotho') {
   const cleaned = String(query || '').trim();
-  if (!cleaned) return { distanceKm: null, googleMapUrl: buildGoogleMapsUrl(cleaned), directionsUrl: '#' };
+  const mapQuery = cleaned ? `${cleaned}, ${region}` : '';
+  if (!cleaned) return { distanceKm: null, googleMapUrl: buildGoogleMapsUrl(mapQuery), directionsUrl: '#' };
 
-  const geo = await geocodeLocation(cleaned);
+  const geo = await geocodeLocation(cleaned, region);
   if (!geo) {
     return {
       distanceKm: null,
-      googleMapUrl: buildGoogleMapsUrl(cleaned),
-      directionsUrl: buildDirectionsUrl(cleaned),
+      googleMapUrl: buildGoogleMapsUrl(mapQuery),
+      directionsUrl: buildDirectionsUrl(mapQuery),
       label: cleaned,
     };
   }
@@ -80,8 +83,8 @@ export async function getLocationDistance(query) {
   const distanceKm = haversineKm(FARM_BASE, geo);
   return {
     distanceKm,
-    googleMapUrl: buildGoogleMapsUrl(cleaned),
-    directionsUrl: buildDirectionsUrl(cleaned),
+    googleMapUrl: buildGoogleMapsUrl(mapQuery),
+    directionsUrl: buildDirectionsUrl(mapQuery),
     label: geo.label,
     distanceText: formatDistanceKm(distanceKm),
   };
