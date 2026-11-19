@@ -62,7 +62,7 @@ CREATE TABLE vendors (
   vendor_name       VARCHAR(100) NOT NULL,
   phone_number      VARCHAR(20)  NOT NULL,
   location          VARCHAR(150) NOT NULL,
-  registration_date DATE         NOT NULL DEFAULT (CURRENT_DATE),
+  registration_date DATE         NOT NULL,
   PRIMARY KEY (vendor_id),
   UNIQUE KEY uq_vendors_phone (phone_number),
   CONSTRAINT chk_vendors_name CHECK (CHAR_LENGTH(TRIM(vendor_name)) > 0)

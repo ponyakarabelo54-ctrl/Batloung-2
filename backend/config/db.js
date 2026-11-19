@@ -15,6 +15,9 @@ const pool = mysql.createPool({
   queueLimit: 0,
   decimalNumbers: true, // return DECIMAL columns as numbers instead of strings
   dateStrings: true,    // return DATE/DATETIME as plain strings (no timezone shifts)
+  // Cloud databases such as TiDB require an encrypted (SSL/TLS) connection.
+  // Set DB_SSL=true in the environment variables to turn it on.
+  ssl: process.env.DB_SSL === 'true' ? { minVersion: 'TLSv1.2', rejectUnauthorized: true } : undefined,
 });
 
 // Checks that MySQL is reachable. It never throws, so a database problem
